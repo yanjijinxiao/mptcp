@@ -799,7 +799,7 @@ static u64 wbbr_weight(const struct mptcp_cb *mpcb, const struct sock *sk)
         u32 bw = minmax_get(&wbbr->bw);
 		/* sampled_rtt is initialized by 0 */
 		if (mptcp_sk_can_send(sub_sk))
-            total_rate += minmax_get(&sub_wbbr->bw)
+            total_rate += minmax_get(&sub_wbbr->bw);
 	}
 
 	if (total_rate &&  minmax_get(&wbbr->bw))
