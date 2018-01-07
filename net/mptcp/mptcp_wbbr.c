@@ -887,7 +887,7 @@ static u32 wbbr_ssthresh(struct sock *sk)
 static size_t wbbr_get_info(struct sock *sk, u32 ext, int *attr,
 			   union tcp_cc_info *info)
 {
-	if (ext & (1 << (INET_DIAG_WBBRINFO - 1)) ||
+	if (ext & (1 << (INET_DIAG_BBRINFO - 1)) ||
 	    ext & (1 << (INET_DIAG_VEGASINFO - 1))) {
 		struct tcp_sock *tp = tcp_sk(sk);
 		struct wbbr *wbbr = inet_csk_ca(sk);
@@ -895,13 +895,13 @@ static size_t wbbr_get_info(struct sock *sk, u32 ext, int *attr,
 
 		bw = bw * tp->mss_cache * USEC_PER_SEC >> BW_SCALE;
 		memset(&info->wbbr, 0, sizeof(info->wbbr));
-		info->wbbr.wbbr_bw_lo		= (u32)bw;
-		info->wbbr.wbbr_bw_hi		= (u32)(bw >> 32);
-		info->wbbr.wbbr_min_rtt		= wbbr->min_rtt_us;
-		info->wbbr.wbbr_pacing_gain	= wbbr->pacing_gain;
-		info->wbbr.wbbr_cwnd_gain		= wbbr->cwnd_gain;
-		*attr = INET_DIAG_WBBRINFO;
-		return sizeof(info->wbbr);
+		info->bbr.bbr_bw_lo		= (u32)bw;
+		info->bbr.bbr_bw_hi		= (u32)(bw >> 32);
+		info->bbr.bbr_min_rtt		= wbbr->min_rtt_us;
+		info->bbr.bbr_pacing_gain	= wbbr->pacing_gain;
+		info->bbr.bbr_cwnd_gain		= wbbr->cwnd_gain;
+		*attr = INET_DIAG_BBRINFO;
+		return sizeof(info->bbr);
 	}
 	return 0;
 }
