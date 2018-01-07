@@ -89,7 +89,7 @@ struct wbbr {
 	u32	prior_cwnd;	/* prior cwnd upon entering loss recovery */
 	u32	full_bw;	/* recent bw, to estimate if pipe is full */
     u64 weight; /* the ratio of subflow's rate to the total rate, * 2^16 */
-    u32 intant_rate;
+    u32 instant_rate;
 };
 
 #define CYCLE_LEN	8	/* number of phases in a pacing gain cycle */
@@ -798,16 +798,16 @@ static u64 wbbr_weight(const struct mptcp_cb *mpcb, const struct sock *sk)
 
 	mptcp_for_each_sk(mpcb, sub_sk) {
 		struct wvegas *sub_wbbr = inet_csk_ca(sub_sk);
-        u32 bw = minmax_get(&wbbr->bw)
+        u32 bw = minmax_get(&wbbr->bw);
 		/* sampled_rtt is initialized by 0 */
 		if (mptcp_sk_can_send(sub_sk))
 			total_rate += sub_wbbr->instant_rate;
 	}
 
-	if (total_rate && wvegas->instant_rate)
-		return div64_u64(wvegas->instant_rate * WBBR_UNIT, total_rate);
+	if (total_rate && wbbr->instant_rate)
+		return div64_u64(wbbr->instant_rate * WBBR_UNIT, total_rate);
 	else
-		return wvegas->weight;
+		return wbbr->weight;
 }
 
 static void wbbr_main(struct sock *sk, const struct rate_sample *rs)
@@ -857,7 +857,7 @@ static void wbbr_init(struct sock *sk)
 	wbbr->full_bw_cnt = 0;
 	wbbr->cycle_mstamp.v64 = 0;
 	wbbr->cycle_idx = 0;
-    wbbr->weight = BBR_UNIT;
+    wbbr->weight = WBBR_UNIT;
     wbbr->instant_rate = 0;
 	wbbr_reset_lt_bw_sampling(sk);
 	wbbr_reset_startup_mode(sk);
