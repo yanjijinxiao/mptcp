@@ -894,7 +894,7 @@ static size_t wbbr_get_info(struct sock *sk, u32 ext, int *attr,
 		u64 bw = wbbr_bw(sk);
 
 		bw = bw * tp->mss_cache * USEC_PER_SEC >> BW_SCALE;
-		memset(&info->wbbr, 0, sizeof(info->wbbr));
+		memset(&info->bbr, 0, sizeof(info->bbr));
 		info->bbr.bbr_bw_lo		= (u32)bw;
 		info->bbr.bbr_bw_hi		= (u32)(bw >> 32);
 		info->bbr.bbr_min_rtt		= wbbr->min_rtt_us;
