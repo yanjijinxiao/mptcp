@@ -796,14 +796,14 @@ static u64 wbbr_weight(const struct mptcp_cb *mpcb, const struct sock *sk)
 
 	mptcp_for_each_sk(mpcb, sub_sk) {
 		struct wbbr *sub_wbbr = inet_csk_ca(sub_sk);
-        u32 bw = minmax_get(&wbbr->bw);
+        u32 bw = wbbr_bw(sub_sk);
 		/* sampled_rtt is initialized by 0 */
 		if (mptcp_sk_can_send(sub_sk))
-            total_rate += minmax_get(&sub_wbbr->bw);
+            total_rate += wbbr_bw(sub_sk);
 	}
 
 	if (total_rate &&  minmax_get(&wbbr->bw))
-		return div64_u64(minmax_get(&wbbr->bw) * WBBR_UNIT, total_rate);
+		return div64_u64(wbbr_bw(sk) * WBBR_UNIT, total_rate);
 	else
 		return WBBR_UNIT;
 }
@@ -820,7 +820,7 @@ static void wbbr_main(struct sock *sk, const struct rate_sample *rs)
 
     wbbr_set_pacing_rate(sk, bw, (int)((wbbr->pacing_gain * wbbr_weight(tp->mpcb, sk)) >> WBBR_SCALE));
 	wbbr_set_tso_segs_goal(sk);
-	wbbr_set_cwnd(sk, rs, rs->acked_sacked, bw, wbbr->cwnd_gain);
+	wbbr_set_cwnd(sk, rs, rs->acked_sacked, bw, (int)((wbbr->cwnd_gain * wbbr_weight(tp->mpcb, sk)) >> WBBR_SCALE));
 }
 
 static void wbbr_init(struct sock *sk)
