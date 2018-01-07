@@ -797,7 +797,7 @@ static u64 wbbr_weight(const struct mptcp_cb *mpcb, const struct sock *sk)
 
 
 	mptcp_for_each_sk(mpcb, sub_sk) {
-		struct wvegas *sub_wbbr = inet_csk_ca(sub_sk);
+		struct wbbr *sub_wbbr = inet_csk_ca(sub_sk);
         u32 bw = minmax_get(&wbbr->bw);
 		/* sampled_rtt is initialized by 0 */
 		if (mptcp_sk_can_send(sub_sk))
