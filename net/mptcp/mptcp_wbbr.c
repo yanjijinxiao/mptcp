@@ -820,7 +820,8 @@ static void wbbr_main(struct sock *sk, const struct rate_sample *rs)
 
     wbbr_set_pacing_rate(sk, bw, (int)((wbbr->pacing_gain * wbbr_weight(tp->mpcb, sk)) >> WBBR_SCALE));
 	wbbr_set_tso_segs_goal(sk);
-	wbbr_set_cwnd(sk, rs, rs->acked_sacked, bw, (int)((wbbr->cwnd_gain * wbbr_weight(tp->mpcb, sk)) >> WBBR_SCALE));
+	//wbbr_set_cwnd(sk, rs, rs->acked_sacked, bw, (int)((wbbr->cwnd_gain * wbbr_weight(tp->mpcb, sk)) >> WBBR_SCALE));
+    wbbr_set_cwnd(sk, rs, rs->acked_sacked, bw, wbbr->cwnd_gain);
 }
 
 static void wbbr_init(struct sock *sk)
